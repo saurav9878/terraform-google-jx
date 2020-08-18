@@ -97,6 +97,7 @@ resource "kubernetes_service_account" "exdns-external-dns" {
 // See https://github.com/jetstack/cert-manager
 // ----------------------------------------------------------------------------
 resource "kubernetes_namespace" "cert-manager" {
+  count = var.jx2 ? 1 : 0
   metadata {
     name = var.cert-manager-namespace
   }
