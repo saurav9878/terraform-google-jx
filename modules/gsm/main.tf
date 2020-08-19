@@ -46,3 +46,26 @@ resource "google_project_iam_member" "gsm_sa_secret_accessor_binding" {
   role     = "roles/secretmanager.secretAccessor"
   member   = "serviceAccount:${local.gsm_sa_email}"
 }
+
+// ----------------------------------------------------------------------------
+// jx3 boot job
+resource "google_service_account" "boot_sa" {
+  provider     = google
+  account_id   = "${var.cluster_name}-boot"
+  display_name = substr("Jenkins X Boot service account for cluster ${var.cluster_name}", 0, 100)
+}
+
+resource "google_service_account_iam_member" "boot_sa_workload_identity_user" {
+
+  provider           = google
+  service_account_id = google_service_account.boot_sa.name
+  role               = "roles/iam.workloadIdentityUser"
+  member             = "serviceAccount:${var.gcp_project}.svc.id.goog[jx/jx-boot-job]"
+}
+
+resource "google_project_iam_member" "boot_sa_secrets_admin_binding" {
+
+  provider = google
+  role     = "roles/secretmanager.admin"
+  member   = "serviceAccount:${google_service_account.boot_sa.email}"
+}
