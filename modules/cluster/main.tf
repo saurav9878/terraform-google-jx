@@ -160,8 +160,7 @@ resource "kubernetes_config_map" "jenkins_x_requirements" {
 
   lifecycle {
     ignore_changes = [
-      metadata,
-      data
+      metadata
     ]
   }
   depends_on = [
